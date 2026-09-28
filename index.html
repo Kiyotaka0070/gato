@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Me perdonas, por favor?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #fdeef4;
+            font-family: 'Fredoka', 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .image-container img {
+            width: 260px;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            background-color: #ffffff;
+        }
+
+        h1 {
+            color: #ff65a3;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            min-height: 150px;
+        }
+
+        button {
+            border: none;
+            border-radius: 16px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, font-size 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-yes {
+            background-color: #3ec658 !important;
+            color: white !important;
+            font-size: 1.2rem;
+            padding: 12px 28px;
+            min-width: 80px;
+        }
+
+        .btn-no {
+            background-color: #f84444 !important;
+            color: white !important;
+            font-size: 1rem;
+            padding: 12px 20px;
+            white-space: nowrap;
+        }
+
+        .btn-no:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .hidden-message {
+            display: none;
+            margin-top: 20px;
+            color: #3ec658;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="image-container">
+            <img id="catImg" src="img/cat1.png" alt="Gatito pidiendo perdón" onerror="handleImageError(this)">
+        </div>
+
+        <h1 id="title">¿Quieres venir a Lima?</h1>
+
+        <div class="buttons" id="buttonContainer">
+            <button class="btn-yes" id="yesBtn" onclick="acceptApology()">Sí</button>
+            <button class="btn-no" id="noBtn" onclick="handleNo()">No</button>
+        </div>
+
+        <div class="hidden-message" id="successMessage">
+            ¡Siiiii! ¡Sabía que aceptarias! ❤️✨
+        </div>
+    </div>
+
+    <script>
+        let clickCount = 0; // Contador de clics en el botón rojo
+        const MAX_CLICKS = 10; // Límite máximo de clics
+
+        const stepsData = [
+            { noText: "¿Estás segura?", img: "img/cat2.png" },
+            { noText: "Por favor", img: "img/cat3.png" },
+            { noText: "Ya no trabajaras", img: "img/cat4.png" },
+            { noText: "Iremos al parque de los gatos", img: "img/cat5.png" },
+            { noText: "Podras dormir todo el dia", img: "img/cat6.png" },
+            { noText: "No cocinaras ni lavaras", img: "img/cat7.png" },
+            { noText: "Te regalare skins y azulitos", img: "img/cat8.png" },
+            { noText: "No me hagas esto :(", img: "img/cat9.png" },
+            { noText: "Quiero llorar", img: "img/cat10.png" }
+        ];
+
+        function handleNo() {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const catImg = document.getElementById('catImg');
+
+            clickCount++;
+
+            // Si aún no ha alcanzado los 10 clics
+            if (clickCount < MAX_CLICKS) {
+                const stepIndex = clickCount - 1;
+                
+                if (stepsData[stepIndex]) {
+                    noBtn.innerText = stepsData[stepIndex].noText;
+                    catImg.src = stepsData[stepIndex].img;
+                }
+
+                // Aumentar el tamaño del botón Sí
+                const currentFontSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+                const currentPaddingY = parseFloat(window.getComputedStyle(yesBtn).paddingTop);
+                const currentPaddingX = parseFloat(window.getComputedStyle(yesBtn).paddingLeft);
+
+                yesBtn.style.fontSize = (currentFontSize + 8) + 'px';
+                yesBtn.style.padding = (currentPaddingY + 6) + 'px ' + (currentPaddingX + 10) + 'px';
+            } else {
+                // Al llegar al clic número 10, se desactiva el botón rojo o muestra el mensaje final
+                noBtn.innerText = "¡Ya presiona SÍ! 😭❤️";
+                noBtn.disabled = true; // Deshabilita el botón rojo para que ya no puedan presionarlo más
+            }
+        }
+
+        function handleImageError(image) {
+            if (image.src.endsWith('.png')) {
+                image.src = image.src.replace('.png', '.jpg');
+            }
+        }
+
+        function acceptApology() {
+            document.getElementById('title').innerText = "¡Siiiii! 🎉❤️";
+            document.getElementById('buttonContainer').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('catImg').src = "img/cat1.png";
+        }
+    </script>
+</body>
+</html>
